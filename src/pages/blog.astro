@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Post from "../components/Post.astro";
+
+const url = `${import.meta.env.API_URL}/posts?populate=imagen`;
+
+const respuesta = await fetch(url);
+const { data } = await respuesta.json();
+---
+
+<!-- parte javascript -->
+<Layout
+  title="Blog"
+  description="Tienda de Guitarras , cursos , blog , instrumentos musicales"
+>
+  <main class="contenedor">
+    <h1 class="heading">Blog</h1>
+    <div class="blog">
+      {data?.map((post) => <Post propiedades={post.attributes} />)}
+    </div>
+  </main>
+
+  <!-- parte de css -->
+  <style>
+    .blog {
+      display: grid;
+      grid-template-columns: 1fr; /* se hace todo en una sola columna */
+      gap: 4rem;
+    }
+
+    @media (min-width: 768px) {
+      .blog {
+        grid-template-columns: repeat(2, 1fr); /* se hace todo en 2 columnas */
+      }
+    }
+
+    @media (min-width: 992px) {
+      .blog {
+        grid-template-columns: repeat(3, 1fr); /* se hace todo en 3 columnas */
+      }
+    }
+  </style>
+</Layout>

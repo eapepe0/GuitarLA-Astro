@@ -1,0 +1,46 @@
+---
+const { titulo, contenido } = Astro.props.propiedades.attributes;
+const imagen = Astro.props.propiedades.attributes.imagen.data.attributes.url;
+const backgroundImage = `url(${imagen})`;
+---
+
+<section class="curso">
+  <div class="contenedor grid">
+    <div class="contenido">
+      <h2 class="heading">{titulo}</h2>
+      <p>{contenido}</p>
+    </div>
+  </div>
+</section>
+<style define:vars={{ backgroundImage }}>
+  .curso {
+    background-image: linear-gradient(
+        to right,
+        rgb(0 0 0 / 0.65),
+        rgb(0 0 0 / 0.7)
+      ),
+      var(--backgroundImage);
+  }
+  .curso {
+    padding: 10rem 0;
+    margin-top: 10rem;
+    background-size: cover;
+    background-position: center center;
+  }
+  @media (min-width: 768px) {
+    .curso .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .curso .contenido {
+      grid-column: 2 / 3;
+    }
+  }
+
+  .curso p {
+    text-align: center;
+    font-size: 2.4rem;
+    color: var(--white);
+  }
+</style>

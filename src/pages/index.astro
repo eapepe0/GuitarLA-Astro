@@ -1,0 +1,49 @@
+---
+import Curso from "../components/Curso.astro";
+import Guitarra from "../components/Guitarra.astro";
+import Post from "../components/Post.astro";
+import Layout from "../layouts/Layout.astro";
+
+const urlGuitarras = `${import.meta.env.API_URL}/guitarras?populate=imagen`;
+const urlBlog = `${import.meta.env.API_URL}/posts?populate=imagen`;
+const urlCurso = `${import.meta.env.API_URL}/curso?populate=imagen`;
+
+const [respGuitarras, respBlog, respCurso] = await Promise.all([
+  fetch(urlGuitarras),
+  fetch(urlBlog),
+  fetch(urlCurso),
+]);
+
+const [{ data: guitarras }, { data: blog }, { data: curso }] =
+  await Promise.all([respGuitarras.json(), respBlog.json(), respCurso.json()]);
+
+console.log(guitarras, blog, curso);
+---
+
+<!-- parte javascript -->
+<Layout
+  title="Inicio"
+  description="Tienda de Guitarras , cursos , blog , instrumentos musicales"
+>
+  <main class="contenedor">
+    <h1 class="heading">Nuestra Coleccion</h1>
+    <div class="grid">
+      {
+        guitarras.map((guitarra) => (
+          <Guitarra propiedades={guitarra.attributes} />
+        ))
+      }
+    </div>
+  </main>
+
+  <Curso propiedades={curso} />
+  <section class="contenedor">
+    <h2 class="heading">Blog</h2>
+    <div class="grid">
+      {blog.map((post) => <Post propiedades={post.attributes} />)}
+    </div>
+  </section>
+</Layout>
+
+<!-- parte de css -->
+<style></style>

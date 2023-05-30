@@ -1,0 +1,116 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Guitarra from "../../components/Guitarra.astro";
+
+export async function getStaticPaths() {
+  const url = `${import.meta.env.API_URL}/guitarras?populate=imagen`;
+  const respuesta = await fetch(url);
+  const { data } = await respuesta.json();
+
+  //* devolvemos un array que nos da el map , donde mapeamos toda la data , y contruimos dentro del array un objeto params donde el id , sera el url que se envia al componente [id].astro
+  //* el cual renderizara el componente, las props son los datos que se pasan al componente
+
+  return data.map((guitarra) => ({
+    params: {
+      id: guitarra.attributes.url,
+    },
+    props: {
+      guitarra: guitarra.attributes,
+    },
+  }));
+}
+
+const { guitarra } = Astro.props; //* extraemos guitarra de los props que pasamos en getStaticPaths
+const { nombre, descripcion, precio } = guitarra; //* extraemos los datos de guitarra
+const medium = guitarra.imagen.data?.attributes.formats.medium.url; //* extraemos la imagen calidad medium
+---
+
+<Layout
+  title="Tienda"
+  description="Tienda de Guitarras , cursos , blog , instrumentos musicales"
+>
+  <main class="guitarra">
+    <img class="imagen" src={medium} alt={`Imagen de la guitarra ${nombre}`} />
+    <div class="contenido">
+      <h3>{nombre}</h3>
+      <p class="texto">{descripcion}</p>
+      <p class="precio">${precio}</p>
+      <form class="formulario">
+        <label class="label">Cantidad</label>
+
+        <select class="select" name="" id="cantidad">
+          <option value="">-- Seleccione --</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <input type="submit" value="Agregar al carrito" class="input" />
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .guitarra {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1rem;
+    align-items: center;
+    max-width: 70rem;
+    margin: 0 auto;
+  }
+  .contenido {
+    padding: 1rem;
+  }
+  .contenido h3 {
+    font-size: 3rem;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  .descripcion {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    overflow: hidden;
+    font-size: 1.8rem;
+  }
+  .precio {
+    color: var(--primary);
+    font-size: 4rem;
+    margin: 0;
+    font-weight: 900;
+  }
+  .formulario {
+    margin-top: 4rem;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+  }
+  .formulario label {
+    font-size: 2.2rem;
+  }
+  .formulario select {
+    border: 1px solid var(--black);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 1rem;
+  }
+  .formulario input[type="submit"] {
+    display: block;
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+    border: none;
+    padding: 1.4rem;
+    background-color: var(--black);
+    color: var(--white);
+    transition-property: background-color;
+    transition-duration: 300ms;
+  }
+  .formulario input[type="submit"]:hover {
+    background-color: var(--primary);
+    cursor: pointer;
+  }
+</style>
